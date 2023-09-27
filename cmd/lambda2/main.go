@@ -18,7 +18,7 @@ func HandleQueueMessage(ctx context.Context, message events.SQSEvent) error {
 		return fmt.Errorf("no lambda context")
 	}
 
-	log.Printf("Got sqs event. [arn=%q]\n", lc.InvokedFunctionArn)
+	log.Printf("Got sqs event. [function_arn=%q]\n", lc.InvokedFunctionArn)
 
 	for _, record := range message.Records {
 

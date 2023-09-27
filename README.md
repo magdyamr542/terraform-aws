@@ -4,9 +4,9 @@
 flowchart TB
    Client[Client] --Upload JSON file--> S3[S3]
    Client ~~~|"Can be any client.\nWill be done with the AWS cli."| Client
-   S3[S3] --Trigger with event--> Lambda[Lambda]
-   Lambda[Lambda 1] --Put payload in the queue--> SQS[SQS]
-   Lambda_2[Lambda 2] --Fetch from the queue--> SQS
+   S3[S3] --Trigger with event 's3:ObjectCreated:*'--> Lambda[Lambda]
+   Lambda[Lambda 1] --1. Read from the bucket.\n2. Put payload in the queue.--> SQS[SQS]
+   SQS --The queue triggers the lambda with an event--> Lambda_2
    Lambda_2[Lambda 2] --Echo the message.\n This can be observed in the logs--> End
 
 ```

@@ -20,7 +20,7 @@ const (
 	App   = "lambda1"
 )
 
-func HandleLambdaEvent(event events.S3Event) error {
+func HandleS3Event(event events.S3Event) error {
 
 	// Init SQS and get the Url of the queue.
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
@@ -39,7 +39,7 @@ func HandleLambdaEvent(event events.S3Event) error {
 	for _, record := range event.Records {
 		record := record
 
-		log.Printf("event data: %+v\n", event)
+		log.Printf("s3 event data: %+v\n", event)
 
 		object, err := s3Svc.GetObject(&s3.GetObjectInput{
 			Bucket: &record.S3.Bucket.Name,
@@ -114,5 +114,5 @@ func getPayload(event api.S3Content) (api.QueuePayload, error) {
 }
 
 func main() {
-	lambda.Start(HandleLambdaEvent)
+	lambda.Start(HandleS3Event)
 }

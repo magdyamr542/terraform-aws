@@ -29,6 +29,8 @@ resource "aws_iam_role_policy" "iam_role_policy_lambda2" {
         # Enable the function to fetch messages from the queue.
         Action = [
           "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
         ]
         Effect   = "Allow"
         Resource = aws_sqs_queue.app_queue.arn

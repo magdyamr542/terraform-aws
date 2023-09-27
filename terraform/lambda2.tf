@@ -54,13 +54,14 @@ data "archive_file" "archive_file_lambda2" {
 
 
 resource "aws_lambda_function" "lambda2" {
-  function_name    = "lambda2"
+  function_name    = local.lambda2_name
   description      = "The function gets by sqs and logs the message it receives"
   role             = aws_iam_role.iam_role_lambda2.arn
   handler          = local.binary_name
   runtime          = "go1.x"
   filename         = local.lambda2_archive_path
   source_code_hash = data.archive_file.archive_file_lambda2.output_base64sha256
+  depends_on       = [aws_cloudwatch_log_group.log_group_for_lambda2]
 }
 
 # Allows the lambda to get events from the queue.

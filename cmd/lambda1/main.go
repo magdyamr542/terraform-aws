@@ -46,7 +46,7 @@ func HandleS3Event(event events.S3Event) error {
 			Key:    &record.S3.Object.Key,
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("can't get object from s3: %v", err)
 		}
 		objectBytes, err := io.ReadAll(object.Body)
 		object.Body.Close()

@@ -30,9 +30,13 @@ resource "aws_iam_role_policy" "iam_role_policy_lambda1" {
         # https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html
         Action = [
           "s3:GetObject",
+          "s3:ListBucket"
         ]
-        Effect   = "Allow"
-        Resource = aws_s3_bucket.app_bucket.arn
+        Effect = "Allow"
+        Resources = [
+          aws_s3_bucket.app_bucket.arn,
+          "${aws_s3_bucket.app_bucket.arn}/*"
+        ]
       },
       {
         # Enable the function to access the queue.
@@ -65,13 +69,14 @@ data "archive_file" "archive_file_lambda1" {
 }
 
 resource "aws_lambda_function" "lambda1" {
-  function_name    = "lambda1"
+  function_name    = local.lambda1_name
   description      = "The function gets triggered when an object is created in s3. It transforms its content and puts a message in sqs"
   role             = aws_iam_role.iam_role_lambda1.arn
   handler          = local.binary_name
   runtime          = "go1.x"
   filename         = local.lambda1_archive_path
   source_code_hash = data.archive_file.archive_file_lambda1.output_base64sha256
+  depends_on       = [aws_cloudwatch_log_group.log_group_for_lambda1]
 }
 
 ## This allows the s3 bucket to invoke the lambda function.

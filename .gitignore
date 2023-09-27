@@ -1,3 +1,4 @@
 .terraform
 *.plan
 tf_generated
+test_s3_files

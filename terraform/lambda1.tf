@@ -49,19 +49,28 @@ resource "aws_iam_role_policy" "iam_role_policy_lambda1" {
 }
 
 
+# Build the lambda binary through a null_resource. It enables us to execute commands.
+# This will write the binary to the value of ${local.lambda1_binary_path}
+resource "null_resource" "build_lambda1_binary" {
+  provisioner "local-exec" {
+    command = "GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ${local.lambda1_binary_path} ${local.lambda1_src_path}"
+  }
+}
 
 data "archive_file" "archive_file_lambda1" {
   type        = "zip"
-  source_file = "lambda1"
-  output_path = "lambda1.zip"
+  source_file = local.lambda1_binary_path
+  output_path = local.lambda1_archive_path
+  depends_on  = [null_resource.build_lambda1_binary]
 }
 
 resource "aws_lambda_function" "lambda1" {
   function_name    = "lambda1"
+  description      = "The function gets triggered when an object is created in s3. It transforms its content and puts a message in sqs"
   role             = aws_iam_role.iam_role_lambda1.arn
-  handler          = "lambda1"
+  handler          = local.binary_name
   runtime          = "go1.x"
-  filename         = "lambda1.zip"
+  filename         = local.lambda1_archive_path
   source_code_hash = data.archive_file.archive_file_lambda1.output_base64sha256
 }
 

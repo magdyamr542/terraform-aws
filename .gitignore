@@ -1,4 +1,6 @@
 .terraform
-*.plan
+terraform/plan*
 tf_generated
 test_s3_files
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup

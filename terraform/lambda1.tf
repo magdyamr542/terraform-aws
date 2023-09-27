@@ -33,9 +33,9 @@ resource "aws_iam_role_policy" "iam_role_policy_lambda1" {
           "s3:ListBucket"
         ]
         Effect = "Allow"
-        Resources = [
-          aws_s3_bucket.app_bucket.arn,
-          "${aws_s3_bucket.app_bucket.arn}/*"
+        Resource = [
+          "${aws_s3_bucket.app_bucket.arn}",
+          "${aws_s3_bucket.app_bucket.arn}/*",
         ]
       },
       {

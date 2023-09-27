@@ -12,7 +12,6 @@ resource "aws_iam_role_policy" "iam_role_policy_lambda2" {
     Statement = [
       {
         # Enable the function to write logs to the configured log group.
-        # https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html
         Action = [
           "logs:CreateLogStream",
           "logs:PutLogEvents"
@@ -24,6 +23,17 @@ resource "aws_iam_role_policy" "iam_role_policy_lambda2" {
         Action   = "lambda:*"
         Effect   = "Allow"
         Resource = "*"
+      },
+      {
+        # Enable the function to put objects to s3.
+        Action = [
+          "s3:PutObject*",
+        ]
+        Effect = "Allow"
+        Resource = [
+          "${aws_s3_bucket.app_bucket_destination.arn}",
+          "${aws_s3_bucket.app_bucket_destination.arn}/*",
+        ]
       },
       {
         # Enable the function to fetch messages from the queue.
@@ -55,7 +65,7 @@ data "archive_file" "archive_file_lambda2" {
 
 resource "aws_lambda_function" "lambda2" {
   function_name    = local.lambda2_name
-  description      = "The function gets by sqs and logs the message it receives"
+  description      = "The function gets triggered by sqs and writes the messages to another s3 bucket"
   role             = aws_iam_role.iam_role_lambda2.arn
   handler          = local.binary_name
   runtime          = "go1.x"

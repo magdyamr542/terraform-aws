@@ -11,14 +11,14 @@ resource "aws_iam_role_policy" "iam_role_policy_lambda2" {
     Version = "2012-10-17"
     Statement = [
       {
-        # Enable the function to write logs.
+        # Enable the function to write logs to the configured log group.
+        # https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazoncloudwatchlogs.html
         Action = [
-          "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ]
         Effect   = "Allow"
-        Resource = "*"
+        Resource = aws_cloudwatch_log_group.log_group_for_lambda2.arn
       },
       {
         Action   = "lambda:*"

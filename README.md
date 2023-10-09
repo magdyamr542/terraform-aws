@@ -1,16 +1,8 @@
-### Pipeline:
+### Examples:
 
-```mermaid
-flowchart TB
-   Client[Client] --Upload JSON file--> S3
-   Client ~~~|"Can be any client.\nWill be done with the AWS cli."| Client
-   S3[S3\nBucket 1] --Fire event and invoice lambda 1--> Lambda
-   Lambda[Lambda 1] --Put payload in queue--> SQS
-   SQS --Invoke lambda 2 with messages from the queue--> Lambda_2
-   Lambda_2[Lambda 2] --Put queue payload in Bucket 2 as a JSON file--> S3_2
-   S3_2[S3\nBucket 2] -->End
-```
+1.  [S3 + Lambda + SQS](./examples/s3_lambda_sqs/README.md)
 
-The infrastructure should be reproducible. Terraform is used to provision the needed components in AWS.
+    - The example demonstrates the usage of S3 triggers (e.g when an object is created) and SQS events.
 
-All components should have the needed permissions to do their job. Example: S3 needs to have permissions to trigger the lambda. Lambda should have permissions to put messages in the queue etc.
+2.  [API Gateway Websocket](./examples/apigateway_ws/README.md)
+    - The example demonstrates a websocket server and how the lambdas are invoked by the routes.
